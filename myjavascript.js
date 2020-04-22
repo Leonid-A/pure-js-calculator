@@ -126,6 +126,7 @@ const screenStyle = "background-color:#43464a; text-align:right; padding-top:25p
 let ekran;
 let ekraniArjeq = "0";
 let gorcoxVayr = [];
+let buttonEnable = true;
 let backspaceEnable = false;
 let equalLogic = true;
 for (let i=0, length = calcButtens.length ;  i<length ; i++){
@@ -164,6 +165,9 @@ for (let i=0, length = calcButtens.length ;  i<length ; i++){
 }
 
 function updateVal(ev){
+    if (!buttonEnable){
+        return
+    }
     backspaceEnable = true;
     logic();
     if (ekraniArjeq === "0" ){
@@ -171,16 +175,21 @@ function updateVal(ev){
     }
     const valText = ev.target.innerHTML;
     ekraniArjeq += valText;
+    checkLength();
     ekran.innerText=ekraniArjeq;
 }
 
 function calc(operator){
+    if (!buttonEnable){
+        return
+    }
     backspaceEnable = false;
     if (ekraniArjeq === "0"){
         if(gorcoxVayr.length == 2){
             gorcoxVayr[1] = operator
         } 
-        else{           
+        else{
+            checkLength()           
             ekran.innerText = ekraniArjeq;
         }
     }
@@ -192,6 +201,7 @@ function calc(operator){
         else{
             var arjeq = eval(gorcoxVayr.join(" "));
             ekraniArjeq = arjeq + "";
+            checkLength()
             ekran.innerHTML = ekraniArjeq;
             gorcoxVayr = [ekraniArjeq,operator];
         }
@@ -200,13 +210,24 @@ function calc(operator){
 }
 
 function equal(){
+    if (!buttonEnable){
+        return
+    }
     gorcoxVayr.push(ekraniArjeq);
     const arjeq = eval(gorcoxVayr.join(""));
     ekraniArjeq = arjeq + "";
+    checkLength()
     ekran.innerHTML = ekraniArjeq;
     gorcoxVayr=[];
     backspaceEnable = false;
     equalLogic = false;
+}
+
+function checkLength(){
+    if (ekraniArjeq.length > 13){
+        ekraniArjeq = "Too Long";
+        buttonEnable = false;
+    }
 }
 
 function logic(){
@@ -222,6 +243,9 @@ function clear(){
 }
 
 function backspace(){
+    if (!buttonEnable){
+        return
+    }
     if (!backspaceEnable){
         return;
     }
@@ -239,6 +263,7 @@ function emptyCalulatorState() {
 }
 
 function gorcoxutyun(objgor){
+    
     var operator = objgor.target.innerHTML;
     const operatorMap = {
         "+": "+",
@@ -258,6 +283,7 @@ function gorcoxutyun(objgor){
             equal();
             break;
         case "CE":
+            buttonEnable = true;
             clear()
             break;
         case "\u21E4":
@@ -267,6 +293,9 @@ function gorcoxutyun(objgor){
 }
 
 function dotHandler() {
+    if (!buttonEnable){
+        return
+    }
     logic();
     if (ekraniArjeq.includes(".")) { 
         return;
